@@ -1,0 +1,13 @@
+ARG NODE_VERSION=20.9.0
+FROM node:${NODE_VERSION}-alpine AS builder
+WORKDIR /app
+COPY . /app
+RUN npm install
+
+
+ENV HOST=0.0.0.0
+ENV PORT=8000
+# EXPOSE 8000
+EXPOSE ${PORT}
+
+ENTRYPOINT ["npm", "start"]
