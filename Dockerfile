@@ -6,7 +6,7 @@ RUN npm install
 
 FROM node:${NODE_VERSION}-alpine
 ENV HOST=0.0.0.0
-ENV PORT=8000
+ENV PORT=80
 EXPOSE ${PORT}
 
 WORKDIR /app
