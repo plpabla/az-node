@@ -8,7 +8,7 @@ const server = http.createServer((req,res)=>{
     // res.writeHead(200, {'Content-Type': 'text/plain'});
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
-    res.end("Hello, world (from Node container, yay!)\nAzure container, yay! #PARTY\nCD enabled (let's add webhooks and push on Github (5))\n");
+    res.end("Hello, world (from Node container, yay!)\nAzure container, yay! #PARTY\nCD enabled (webhook working but only after manual reset...)\n");
 });
 
 server.listen(port, host, () => {
