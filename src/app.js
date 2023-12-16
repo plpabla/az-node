@@ -10,7 +10,7 @@ const port = process.env.PORT || 6900;
 const messages = [];
 
 // mognodb settings
-const mongoUrl = "mongodb://root:example@0.0.0.0?writeConcern=majority"
+const mongoUrl = process.env.MONGODB_URI || "mongodb://root:example@0.0.0.0?writeConcern=majority"
 const client = new MongoClient(mongoUrl);
 const dbName = 'test';
 
@@ -36,7 +36,7 @@ exports.displayMessages = async function(req, res) {
     getMessagesFromDB()
     .then((messages) => {
         const body = JSON.stringify(messages);
-        res.writeHead(200, {"Content-Type": "text/plain", "Content-Length": body.length+6});
+        res.writeHead(200, {"Content-Type": "text/plain", "Content-Length": body.length});
         res.end(body);
     })
     .catch(console.error)
@@ -51,7 +51,7 @@ async function getMessagesFromDB() {
     const collection = db.collection('MsgBrdTest');
   
     const findResult = await collection.find({}).toArray();
-    // console.log('Found documents =>', findResult);
+    console.log('Found documents =>', findResult);
   
     return findResult;
   }
