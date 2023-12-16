@@ -6,6 +6,8 @@ RUN mkdir node_modules
 RUN npm install
 
 FROM node:${NODE_VERSION}-alpine
+ARG MONGODB_URI="mongodb://root:example@0.0.0.0?writeConcern=majority"
+ENV MONGODB_URI=${MONGODB_URI}
 ENV HOST=0.0.0.0
 ENV PORT=80
 EXPOSE ${PORT}
