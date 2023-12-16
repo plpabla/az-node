@@ -27,9 +27,28 @@ exports.server = http.createServer((req,res)=>{
 });
 
 
+
+    
+
+
+const HTML_PRE='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BiedaTweeter</title></head><body>'
+const HTML_POST='</body></html>'
+
 function createDefaultView(req, res) {
-    res.writeHead(200, {"Content-Type": "text/plain"});
-    res.end("Supported endpoints:\nmessages/create.json (POST)\nmessages/list.json (GET)\n");
+    getMessagesFromDB()
+    .then((messages) => {
+        body = ""
+        messages.forEach((m)=>{
+            body+=m.name+": "+m.message+"<br>"
+        })
+        res.writeHead(200, {"Content-Type": "text/html"})
+        res.end(HTML_PRE
+            +"Supported endpoints:<br>messages/create.json (POST)<br>messages/list.json (GET)<br><hr>"
+            +body
+            +HTML_POST)
+    })
+    .catch()
+    .finally()
 }
 
 exports.displayMessages = async function(req, res) {
@@ -46,12 +65,10 @@ exports.displayMessages = async function(req, res) {
 async function getMessagesFromDB() {
     // Use connect method to connect to the server
     await client.connect();
-    console.log('Connected successfully to server');
     const db = client.db(dbName);
     const collection = db.collection('MsgBrdTest');
   
     const findResult = await collection.find({}).toArray();
-    console.log('Found documents =>', findResult);
   
     return findResult;
   }
@@ -60,13 +77,10 @@ exports.addMessage = async function(req, res) {
     let message = '';
     req.on('data', async function(data, msg) {
         let dataStr = data.toString('utf-8');
-        console.log(dataStr);
         message = await saveMessageInDB(querystring.parse(dataStr));
     });
 
     req.on('end', function() {
-        console.log("message", util.inspect(message, true, null));
-        console.log("messages", util.inspect(messages, true, null));
         res.writeHead(200, {"Content-Type": "text/plain"});
         res.end(message);
     })
@@ -74,10 +88,8 @@ exports.addMessage = async function(req, res) {
 
 async function saveMessageInDB(txt) {
     await client.connect()
-    console.log('Connected successfully to server')
     const db = client.db(dbName)
     const collection = db.collection('MsgBrdTest')
   
     const insertResult = await collection.insertOne(txt)
-    console.log("inserted => ", insertResult)
 }
