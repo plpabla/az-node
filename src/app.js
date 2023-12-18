@@ -11,13 +11,14 @@ const messages = [];
 
 // mognodb settings
 const mongoUrl = process.env.MONGODB_URI || "mongodb://root:example@0.0.0.0?writeConcern=majority"
+console.log(`Mongodb on ${mongoUrl}`)
 const client = new MongoClient(mongoUrl);
 const dbName = 'test';
 
 exports.server = http.createServer((req,res)=>{
-    if(req.method == "POST" && req.url == "/messages/create.json") {
+    if(req.method == "POST" && req.url == "/messages/create") {
         exports.addMessage(req, res);
-    } else if (req.method == "GET" && req.url == "/messages/list.json") {
+    } else if (req.method == "GET" && req.url == "/messages/list") {
         exports.displayMessages(req, res);
     } else {
         createDefaultView(req, res);
@@ -26,29 +27,9 @@ exports.server = http.createServer((req,res)=>{
     console.log(`Server is running at http://${host}:${port}/`)
 });
 
-
-
-    
-
-
-const HTML_PRE='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BiedaTweeter</title></head><body>'
-const HTML_POST='</body></html>'
-
 function createDefaultView(req, res) {
-    getMessagesFromDB()
-    .then((messages) => {
-        body = ""
-        messages.forEach((m)=>{
-            body+=m.name+": "+m.message+"<br>"
-        })
-        res.writeHead(200, {"Content-Type": "text/html"})
-        res.end(HTML_PRE
-            +"Supported endpoints:<br>messages/create.json (POST)<br>messages/list.json (GET)<br><hr>"
-            +body
-            +HTML_POST)
-    })
-    .catch()
-    .finally()
+    res.writeHead(403, "not available")
+    res.end()
 }
 
 exports.displayMessages = async function(req, res) {
@@ -90,6 +71,5 @@ async function saveMessageInDB(txt) {
     await client.connect()
     const db = client.db(dbName)
     const collection = db.collection('MsgBrdTest')
-  
     const insertResult = await collection.insertOne(txt)
 }
